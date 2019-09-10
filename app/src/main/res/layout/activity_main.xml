@@ -60,12 +60,19 @@
 
         <Button
             android:id="@+id/button4"
-            style="@style/estiloBotoesOperacoes"
+            style="@style/estiloBotoesNumeros"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="÷"
             android:textSize="@dimen/tamanho_texto_botoes" />
+
+        <Button
+            android:id="@+id/buttonDel"
+            style="@style/estiloBotoesOperacoes"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Del" />
     </LinearLayout>
 
     <LinearLayout
