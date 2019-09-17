@@ -1,265 +1,142 @@
 package br.senac.es.calculadora;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
-    String visor = "";
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 
+
+public class MainActivity extends Activity {
+    private Calculadora calc;
+    char separadorChar;
+private String separador;
+String visor = "";
+
+
+
+
+    private boolean usuarioEstaDigitandoUmNumero;
+    private boolean separadorDecimalFoiDigitado;
+    private TextView textVisor;
+
+
+//Deleter
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final Button deleter = (Button)findViewById(R.id.buttonDel);
 
 
-        final Button button1 = (Button) findViewById(R.id.button1);
-        final Button button13 = (Button) findViewById(R.id.button13);  // button13 = 1
-        final Button button14 = (Button) findViewById(R.id.button14); // button14 = 2
-        final Button button15 = (Button) findViewById(R.id.button15); // button15 = 3
-        final Button button9 = (Button) findViewById(R.id.button9); // button9 = 4
-        final Button button10 = (Button) findViewById(R.id.button10); //button10 = 5
-        final Button button11 = (Button) findViewById(R.id.button11); //button11 = 6
-        final Button button5 = (Button) findViewById(R.id.button5); // button5 = 7
-        final Button button6 = (Button) findViewById(R.id.button6); //button6 = 8
-        final Button button7 = (Button) findViewById(R.id.button7); // button7 = 9
-        final Button button16 = (Button) findViewById(R.id.button16); // +
-        final Button button12 = (Button) findViewById(R.id.button12); //-
-        final Button button8 = (Button) findViewById(R.id.button8); //X
-        final Button button20 = (Button) findViewById(R.id.button20); //=
-        final Button button4 = (Button) findViewById(R.id.button4); //÷
-        final Button button18 = (Button) findViewById(R.id.button18); //0
-        final Button button2 = (Button) findViewById(R.id.button2); //+/-
-        final Button buttonDel = (Button) findViewById(R.id.buttonDel); //buttonDel
-        final TextView textVisor = (TextView) findViewById(R.id.textVisor);
-
-
-        buttonDel.setOnClickListener(new View.OnClickListener() {
-                                         @Override
-                                         public void onClick(View view) {
-//
-                                             visor = (visor.substring(0, visor.length() - 1));
-                                             textVisor.setText(visor);
-
-
-                                         }
-                                     }
-        );
-
-
-        button18.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "0";
-                textVisor.setText(visor);
-            }
-        });
-
-
-        // Botao =
-        button20.setOnClickListener(new View.OnClickListener() {
+        deleter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-            }
-        });
-
-        //Botao ÷
-        button4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "÷";
-                textVisor.setText(visor);
-            }
-        });
 
 
-        //Botao x
-        button8.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "x";
-                textVisor.setText(visor);
-            }
-        });
 
-
-        //Botao -
-        button12.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (visor.substring(visor.length() - 1).contains("+")) {
-                    visor = (visor.substring(0, visor.length() - 1));
-                    visor = visor + "-";
-                    textVisor.setText(visor);
-
-                    if (visor.substring(visor.length() - 1).contains("-")){
-                        textVisor.setText(visor);
-
-                    }
-
-                }
-
-                else {
-                    visor = visor + "-";
-                    textVisor.setText(visor);
+                if(textVisor.getText() != null && textVisor.getText().toString().length() > 0){
+                    textVisor.setText(textVisor.getText().toString().substring(0, textVisor.getText().toString().length() - 1));
                 }
 
 
-                //Essa parte de baixo deu errado.
-//                for(int i=0; i < visor.length(); i++){
-//                    if(visor.charAt(i) == '+'){
-//                        visor = (visor.substring(i,visor.length()-1));
-//                        visor = visor + "-";
-//                        textVisor.setText(visor);
-//                    }else {
-//                        visor = visor + "-";
-//                        textVisor.setText(visor);
-//                    }
-//                }
-//
-//                visor.charAt(visor.length());
-//
-//
-//                visor = (visor.substring(0,visor.length()-1));
-//                textVisor.setText(visor);
-//
-//
-//                    visor.(visor.length()-1);
-//                   textVisor.setText(visor);
-
-
             }
         });
 
 
-        // Botao +
-        button16.setOnClickListener(new View.OnClickListener() {
+        calc = new Calculadora();
+        usuarioEstaDigitandoUmNumero = false;
+        separadorDecimalFoiDigitado = false;
+
+        textVisor = (TextView) findViewById(R.id.textVisor);
+        textVisor.setText("0");
+
+        Locale localizacao = getResources().getConfiguration().locale;
+
+        NumberFormat formatador = NumberFormat.getInstance(localizacao);
+
+        if(formatador instanceof DecimalFormat){
+            DecimalFormatSymbols sombolo = ((DecimalFormat)formatador).getDecimalFormatSymbols();
+            separadorChar = sombolo.getDecimalSeparator();
+        }
+        separador = String.valueOf(separadorChar);
+        Button btnSeparador = (Button)findViewById(R.id.button19);
+        btnSeparador.setText(separador);
+        final Typeface fonteDigital = Typeface.createFromAsset(this.getAssets(), "digital.ttf");
+        textVisor.setTypeface(fonteDigital);
+        textVisor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (visor.substring(visor.length() - 1).contains("-")) {
-                    visor = (visor.substring(0, visor.length() - 1));
-                    visor = visor + "+";
-                    textVisor.setText(visor);
-
-
-                } else {
-                    visor = visor + "+";
-                    textVisor.setText(visor);
+                if(textVisor.getTypeface().equals(fonteDigital)){
+                    textVisor.setTypeface(Typeface.DEFAULT);
+                }else {
+                    textVisor.setTypeface(fonteDigital);
                 }
-
             }
         });
-
-
-        //Botao 9
-        button7.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "9";
-                textVisor.setText(visor);
-            }
-        });
-
-
-        //Botao 9
-        button6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "8";
-                textVisor.setText(visor);
-            }
-        });
-
-
-        //Boatao 7
-        button5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "7";
-                textVisor.setText(visor);
-            }
-        });
-
-
-        //botao 6
-        button11.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "6";
-                textVisor.setText(visor);
-            }
-        });
-
-
-        //botao 5
-        button10.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "5";
-                textVisor.setText(visor);
-            }
-        });
-
-
-        //botao 4
-        button9.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "4";
-                textVisor.setText(visor);
-            }
-        });
-
-
-        //botao 3
-        button15.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "3";
-                textVisor.setText(visor);
-
-            }
-        });
-
-
-        //Botao 2
-        button14.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "2";
-                textVisor.setText(visor);
-
-
-            }
-        });
-
-
-        //Botao numero 1
-        button13.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = visor + "1";
-                textVisor.setText(visor);
-
-
-            }
-        });
-
-
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                visor = "";
-                textVisor.setText(visor);
-            }
-        });
-
+        Toast.makeText(this, "Toque no visor para trocar a sua fonte",
+                Toast.LENGTH_LONG).show();
     }
 
 
+
+    public void onClickNumeros(View v) {
+        Button botaoTocado = (Button) v;
+        String digito = botaoTocado.getText().toString();
+        String textoNoVisor = textVisor.getText().toString();
+
+        if (!usuarioEstaDigitandoUmNumero || textoNoVisor.equals("0")) {
+            textVisor.setText(digito);
+            if (!digito.equals("0")) {
+                usuarioEstaDigitandoUmNumero = true;
+            }
+        } else {
+            textVisor.setText(textoNoVisor + digito);
+        }
+    }
+
+    public void onClickOperacoes(View v) {
+        Button botaoTocado = (Button) v;
+        String operacoes = botaoTocado.getText().toString();
+
+        if (operacoes.equals(separador) && !separadorDecimalFoiDigitado) {
+            separadorDecimalFoiDigitado = true;
+            if (!usuarioEstaDigitandoUmNumero)
+                textVisor.setText("0" + separador);
+            else
+                textVisor.setText(textVisor.getText().toString() + separador);
+            usuarioEstaDigitandoUmNumero = true;
+
+        } else if (!operacoes.equals(separador)) {
+            String valorSemVirgula = textVisor.getText().toString().replace(separadorChar,'.');
+            calc.setOperando(Double.parseDouble(valorSemVirgula));
+            calc.realizarOperacao(operacoes);
+            String textoResultado = String.valueOf(calc.getOperando());
+
+            if (textoResultado.endsWith(".0")) {
+                textoResultado = textoResultado.substring(0, textoResultado.length() - 2);
+            }
+            textVisor.setText(textoResultado.replace('.', separadorChar));
+            usuarioEstaDigitandoUmNumero = false;
+            separadorDecimalFoiDigitado = false;
+        }
+    }
+
+    public void onClickMemoria(View v) {
+        Button botaoTocado = (Button) v;
+        String operaca0Memoria = botaoTocado.getText().toString();
+        String valorSemVirgula = textVisor.getText().toString().replace(separadorChar,'.');
+        calc.setOperando(Double.parseDouble(valorSemVirgula));
+        calc.realizarOperacaoDeMemoria(operaca0Memoria);
+        usuarioEstaDigitandoUmNumero = false;
+    }
 }
+
