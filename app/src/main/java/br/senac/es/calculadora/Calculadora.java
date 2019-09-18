@@ -23,11 +23,16 @@ public class Calculadora {
         return operando;
     }
 
-
+//Pelo fato de ser privado nós utilizamos os métodos de set parar colocarmos valores nele.
     public void setOperando(double operando) {
         this.operando = operando;
     }
 
+
+    //Método com retorno vazio, sem argumentos.
+    //Ele é privado pois só será utilizado na classe Calcladora.
+    //Realizando IF's
+    //Verificar qual o operador anterior
     private void realizarOperacaoAnterior() {
         if (!operadorAnterior.equals("")) {
             if (operadorAnterior.equals("+")) {
@@ -37,6 +42,7 @@ public class Calculadora {
             } else if (operadorAnterior.equals("X")) {
                 operando = operandoAnterior * operando;
             } else if (operadorAnterior.equals("/")) {
+                //Evita a divisao por 0
                 if (operando != 0) {
                     operando = operandoAnterior / operando;
                 }
@@ -44,6 +50,8 @@ public class Calculadora {
         }
     }
 
+    //Método Public com retorno vazio e argumento String
+    //Pode ser usado externamente
     public void realizarOperacao(String op) {
         if (op.equals("%")) {
             operando = (operandoAnterior * operando) / 100;
@@ -60,6 +68,9 @@ public class Calculadora {
         }
     }
 
+
+    //Método Public com retorno vazio e argumento String
+    //Pode ser usado externamente
     public void realizarOperacaoDeMemoria(String opm) {
         if (opm.equals("mc")) {
             memoria = 0;
